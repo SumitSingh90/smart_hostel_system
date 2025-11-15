@@ -1,0 +1,8 @@
+.card.form{max-width:720px}
+.card.form input, .card.form textarea, .card.form select {
+  width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #e6e9ef;background:transparent
+}
+.btn{background:#111827;color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
+.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px 12px;border-radius:6px}
+.center-screen{display:flex;align-items:center;justify-content:center;height:100vh;padding:20px}
+.auth-card{width:100%;max-width:420px}

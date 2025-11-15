@@ -1,0 +1,19 @@
+:root{
+  --bg:#f5f6f8; --panel:#fff; --muted:#6b7280; --accent:#111827;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:#0f1724}
+.sidebar{
+  width:260px;height:100vh;position:fixed;left:0;top:0;background:var(--panel);box-shadow:2px 0 10px rgba(0,0,0,0.04);padding:24px;
+}
+.sidebar .sidebar-brand{font-weight:700;margin-bottom:18px;font-size:18px}
+.nav-list{list-style:none;padding:0;margin:0}
+.nav-list .nav-link{display:block;padding:10px 12px;color:var(--muted);text-decoration:none;border-radius:8px}
+.nav-list .nav-link:hover{background:rgba(0,0,0,0.04);color:#000}
+
+.topbar{height:64px;position:fixed;left:260px;right:0;top:0;background:var(--panel);display:flex;align-items:center;justify-content:space-between;padding:0 22px;box-shadow:0 1px 6px rgba(0,0,0,0.04)}
+.topbar .brand{font-weight:700}
+.topbar .top-actions{display:flex;gap:12px;align-items:center}
+
+.main-content{margin-left:260px;padding:100px 28px 40px 28px}
+.page-title{font-size:24px;margin-bottom:16px}

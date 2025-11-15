@@ -1,0 +1,79 @@
+/* Center the login form on screen */
+.center-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* full viewport height */
+  background-color: #f0f2f5; /* light background */
+  font-family: Arial, sans-serif;
+}
+
+/* Card container for login form */
+.card.auth-card {
+  background-color: #fff;
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Form heading */
+.card.auth-card h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+/* Input field wrapper */
+.input-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+/* Labels */
+.input-field label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Inputs */
+.input-field input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: 0.3s border-color;
+}
+
+.input-field input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Submit button */
+.btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s background-color;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+/* Optional: responsive for small screens */
+@media (max-width: 500px) {
+  .card.auth-card {
+    padding: 30px 20px;
+  }
+}

@@ -26,6 +26,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const userSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
+  contact: { type: Number, required: true, maxLength: 10 },
   password: String,
   role: { type: String, enum: ["admin", "student", "worker"], required: true },
   roomNo: String, // only for students
@@ -81,6 +82,8 @@ const role = (roles) => (req, res, next) => {
 // ---------------------------
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
+  console.log("LOGIN BODY =>", req.body);
+
   const user = await User.findOne({ email });
   if (!user) return res.status(400).json({ error: "User not found" });
 
@@ -95,10 +98,11 @@ app.post("/api/login", async (req, res) => {
 // USER MANAGEMENT (Admin only)
 // ---------------------------
 app.post("/api/create-user", auth, role(["admin"]), async (req, res) => {
-  const { name, email, password, role, roomNo } = req.body;
+  const { name, email, contact, password, role, roomNo } = req.body;
+  console.log("BODY =>", req.body);
   try {
     const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashed, role, roomNo });
+    const user = await User.create({ name, email, contact, password: hashed, role, roomNo });
     res.json(user);
   } catch (err) {
     res.status(400).json({ error: "Error creating user" });
@@ -109,6 +113,59 @@ app.get("/api/users", auth, role(["admin"]), async (req, res) => {
   const users = await User.find({});
   res.json({ users });
 });
+
+app.get("/api/dashboard/room-status", async (req, res) => {
+  try {
+    // Get all students with rooms
+    const students = await User.find({ role: "student" });
+
+    // Get cleaning requests
+    const cleaningRequests = await Cleaning.find().sort({ createdAt: -1 });
+
+    // Mapping room -> latest cleaning status
+    const roomMap = {};
+
+    cleaningRequests.forEach((req) => {
+      if (!roomMap[req.roomNo]) {
+        roomMap[req.roomNo] = {
+          roomNo: req.roomNo,
+          status: req.status,
+          student: req.student,
+          assignedWorker: req.assignedWorker || null,
+          lastRequestDate: req.createdAt,
+        };
+      }
+    });
+
+    // Build final room list
+    const rooms = students.map((s) => ({
+      roomNo: s.roomNo || "-",
+      student: s.name,
+      status: roomMap[s.roomNo]?.status || "Not Requested",
+      worker: roomMap[s.roomNo]?.assignedWorker || null,
+      lastRequestDate: roomMap[s.roomNo]?.lastRequestDate || null,
+    }));
+
+    // Summary stats
+    const totalRooms = rooms.length;
+    const cleaned = rooms.filter((r) => r.status === "completed").length;
+    const pending = rooms.filter((r) => r.status === "pending").length;
+    const notRequested = rooms.filter((r) => r.status === "Not Requested").length;
+
+    res.json({
+      totalRooms,
+      cleaned,
+      pending,
+      notRequested,
+      rooms,
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server Error" });
+  }
+});
+
 
 // ---------------------------
 // COMPLAINT ROUTES

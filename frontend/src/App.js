@@ -5,8 +5,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { Admin } from "./admin";
 import { Student } from "./studentDashboard";
 import { Worker } from "./workerDashboard";
-import "./App.css"; // <-- NEW CSS FILE
-
+import "./App.css";
 const API = "http://localhost:5000";
 
 function Login({ setToken, setUser }) {
@@ -14,7 +13,7 @@ function Login({ setToken, setUser }) {
 
   async function handleLogin(e) {
     e.preventDefault();
-
+    console.log(e.target.password.value);
     const res = await fetch(`${API}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -27,9 +26,15 @@ function Login({ setToken, setUser }) {
     const data = await res.json();
     if (data.error) return alert(data.error);
 
+    // Save in React state
     setToken(data.token);
     setUser(data.user);
 
+    // Save in browser memory
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    // Navigate based on role
     if (data.user.role === "admin") navigate("/admin");
     if (data.user.role === "student") navigate("/student");
     if (data.user.role === "worker") navigate("/worker");
@@ -42,6 +47,7 @@ function Login({ setToken, setUser }) {
 
         <form onSubmit={handleLogin} className="form">
           <input name="email" placeholder="Email" required className="input" />
+
           <input
             type="password"
             name="password"
@@ -58,8 +64,13 @@ function Login({ setToken, setUser }) {
 }
 
 function App() {
-  const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null);
+  // Load saved login from browser localStorage
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [user, setUser] = useState(
+    localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
+      : null
+  );
 
   return (
     <Routes>
@@ -83,7 +94,7 @@ function App() {
         path="/admin"
         element={
           token && user?.role === "admin" ? (
-            <Admin token={token} />
+            <Admin token={token} user={user} />
           ) : (
             <Login setToken={setToken} setUser={setUser} />
           )
@@ -94,7 +105,7 @@ function App() {
         path="/worker"
         element={
           token && user?.role === "worker" ? (
-            <Worker token={token} />
+            <Worker token={token} user={user} />
           ) : (
             <Login setToken={setToken} setUser={setUser} />
           )
